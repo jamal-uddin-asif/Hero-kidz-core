@@ -8,7 +8,7 @@ export const SocialButtons = () => {
 
   const handleSignIn = async () => {
     const result = await signIn("google", {
-      // redirect: "false",
+      redirect: "false",
       callbackUrl: params.get("callbackUrl") || "/",
     });
   };

@@ -31,7 +31,7 @@ export const authOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      console.log({ user, account, profile, email, credentials });
+      // console.log({ user, account, profile, email, credentials });
 
       const isExist = await dbConnect(collections.USERS).findOne({
         email: user.email,
@@ -57,14 +57,15 @@ export const authOptions = {
     //   return baseUrl;
     // },
     async session({ session, token, user }) {
-      if (token) {
-        session.role = token?.role;
-        session.email = token?.email;
+      if(token){
+        session.role = token.role
+        session.email = token.email
       }
       return session;
     },
     async jwt({ token, user, account, profile, isNewUser }) {
-      console.log("account data in token", account);
+      console.log({'AccountValueInJWT': account})
+
       if (user) {
         if (account.provider == "google") {
           const dbUser = await dbConnect(collections.USERS).findOne({

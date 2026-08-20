@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/layouts/Navbar";
 import Footer from "@/components/layouts/Footer";
 import NextAuthProvider from "@/provider/NextAuthProvider";
+import { Suspense } from "react";
 
 const poppins = Poppins({
   weight: ["100", "200", "400", "500", "600", "800"],
@@ -95,9 +96,11 @@ export default function RootLayout({ children }) {
           <header className="py-2 md:w-11/12 mx-auto">
             <Navbar></Navbar>
           </header>
-          <main className="py-2 md:w-11/12 mx-auto min-h-[calc(100vh-302px)]">
-            {children}
-          </main>
+          <Suspense>
+            <main className="py-2 md:w-11/12 mx-auto min-h-[calc(100vh-302px)]">
+              {children}
+            </main>
+          </Suspense>
 
           <footer>
             <Footer></Footer>
