@@ -4,6 +4,7 @@ export const collections = {
   PRODUCTS: "products",
   USERS: "users",
   CART: "cart",
+  ORDERS: 'orders'
 };
 
 const { MongoClient, ServerApiVersion } = require("mongodb");

@@ -1,10 +1,11 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import CartItem from "./CartItem";
+import Link from "next/link";
 
 const Carts = ({ cartItem }) => {
   const [items, setItem] = useState(cartItem);
-  console.log(items)
+  console.log(items);
   const totalItems = useMemo(
     () => items.reduce((prev, item) => prev + item.quantity, 0),
     [items],
@@ -12,10 +13,11 @@ const Carts = ({ cartItem }) => {
 
   const removeItem = (id) => {
     // const formatedItems = items.filter((item) => item._id !== id);
-    setItem((prevItem) => prevItem._id !== id);
+    setItem((prevItem) => prevItem.filter((item) => item._id !== id));
   };
 
   const updateQuantity = (id, q) => {
+    console.log("updateQuantity func parameters: ", { id, q });
     // const formatedItems = items.filter((item) => item._id !== id);
     setItem((prevItem) =>
       prevItem.map((item) =>
@@ -24,16 +26,17 @@ const Carts = ({ cartItem }) => {
     );
   };
 
-  const totalPrice = useMemo(() =>
-    items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-  [items]);
+  const totalPrice = useMemo(
+    () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [items],
+  );
 
-  const handleConfirmOrder = () => {}
+  const handleConfirmOrder = () => {};
 
   return (
-   <div className="max-w-6xl mx-auto p-4">
+    <div className="max-w-6xl mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">Total cart: {items.length}</h2>
-      
+
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Left Side: Cart Items List */}
         <div className="flex-1 space-y-4">
@@ -51,10 +54,12 @@ const Carts = ({ cartItem }) => {
         <div className="w-full lg:w-80 h-fit bg-slate-50 border border-slate-200 rounded-lg p-5 shadow-sm space-y-4">
           <h3 className="text-xl font-bold border-b pb-2">Order Summary</h3>
 
-    
           <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
             {items.map((item) => (
-              <div key={item._id || item.productId} className="flex justify-between text-sm">
+              <div
+                key={item._id || item.productId}
+                className="flex justify-between text-sm"
+              >
                 <div className="pr-2">
                   <p className="font-medium text-slate-800">{item.title}</p>
                   <p className="text-xs text-slate-500">
@@ -70,7 +75,6 @@ const Carts = ({ cartItem }) => {
 
           <hr className="border-slate-200" />
 
- 
           <div className="space-y-2 text-sm">
             <div className="flex justify-between text-slate-600">
               <span>Total Items</span>
@@ -82,14 +86,15 @@ const Carts = ({ cartItem }) => {
             </div>
           </div>
 
-   
-          <button
+          <Link
+           href={'/checkout'}
+            
             onClick={handleConfirmOrder}
             disabled={items.length === 0}
             className="w-full mt-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white font-medium py-2.5 px-4 rounded-md transition-colors"
           >
             Confirm Order
-          </button>
+          </Link>
         </div>
       </div>
     </div>
