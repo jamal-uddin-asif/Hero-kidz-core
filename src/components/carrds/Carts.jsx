@@ -12,7 +12,16 @@ const Carts = ({ cartItem }) => {
 
   const removeItem = (id) => {
     // const formatedItems = items.filter((item) => item._id !== id);
-    setItem(prevItem=> prevItem._id !== id);
+    setItem((prevItem) => prevItem._id !== id);
+  };
+
+  const updateQuantity = (id, q) => {
+    // const formatedItems = items.filter((item) => item._id !== id);
+    setItem((prevItem) =>
+      prevItem.map((item) =>
+        item._id === id ? { ...item, quantity: q } : item,
+      ),
+    );
   };
 
   return (
@@ -21,9 +30,12 @@ const Carts = ({ cartItem }) => {
       <div className="flex gap-5">
         <div className="felx-3 space-y-2">
           {items.map((cart) => (
-            <CartItem key={cart.productId} item={cart}
-            removeItem={removeItem}
-             />
+            <CartItem
+              key={cart.productId}
+              item={cart}
+              removeItem={removeItem}
+              updateQuantity={updateQuantity}
+            />
           ))}
         </div>
         <div className="felx-1">Total cart quantity: {totalItems}</div>

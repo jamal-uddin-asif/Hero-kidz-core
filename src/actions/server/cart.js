@@ -74,7 +74,7 @@ export const deleteCart = async (id) => {
   return { success: Boolean(result.deletedCount) };
 };
 
-const increseItemDb = async (id, quantity) => {
+export const increseItemDb = async (id, quantity) => {
   const { user } = (await getServerSession(authOptions)) || {};
   if (!user) return { success: false };
 
@@ -86,6 +86,26 @@ const increseItemDb = async (id, quantity) => {
   const updatedData = {
     $inc: {
       quantity: 1,
+    },
+  };
+
+  const result = await cartCollection.updateOne(query, updatedData);
+
+  return { success: Boolean(result.matchedCount) };
+};
+
+export const decreseItemDb = async (id, quantity) => {
+  const { user } = (await getServerSession(authOptions)) || {};
+  if (!user) return { success: false };
+
+  if (quantity <= 1)
+    return { success: false, message: "Quantity can not be emty" };
+
+  const query = { _id: new ObjectId(id) };
+
+  const updatedData = {
+    $inc: {
+      quantity: -1,
     },
   };
 
