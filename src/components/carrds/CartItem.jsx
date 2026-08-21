@@ -1,26 +1,17 @@
 "use client";
 
-import { deleteCart, increseItemDb } from "@/actions/server/cart";
+import {
+  decreseItemDb,
+  deleteCart,
+  increseItemDb,
+} from "@/actions/server/cart";
 import React, { useState } from "react";
 import { FaPlus, FaMinus, FaTrashAlt } from "react-icons/fa";
 import Swal from "sweetalert2";
 
 export default function CartItem({ item, removeItem, updateQuantity }) {
   const [quantity, setQuantity] = useState(item?.quantity || 1);
-
-  //   const handleIncrease = () => {
-  //     const newQty = quantity + 1;
-  //     setQuantity(newQty);
-  //     if (onUpdateQuantity) onUpdateQuantity(item._id, newQty);
-  //   };
-
-  //   const handleDecrease = () => {
-  //     if (quantity > 1) {
-  //       const newQty = quantity - 1;
-  //       setQuantity(newQty);
-  //       if (onUpdateQuantity) onUpdateQuantity(item._id, newQty);
-  //     }
-  //   };
+  const [loading, setLoading] = useState(false);
 
   const handleDelete = async () => {
     Swal.fire({
@@ -35,7 +26,7 @@ export default function CartItem({ item, removeItem, updateQuantity }) {
       if (result.isConfirmed) {
         const result = await deleteCart(item._id);
         if (result.success) {
-          removeItem(item._id)
+          removeItem(item._id);
           Swal.fire({
             title: "Deleted!",
             text: "Your file has been deleted.",
@@ -46,13 +37,25 @@ export default function CartItem({ item, removeItem, updateQuantity }) {
     });
   };
 
-  const handleIncrease =async () =>{
-   const result = await increseItemDb(item._id, quantity)
-   if(result.success){
-    
-    updateQuantity(item._id, quantity + 1)
-   }
-  }
+  const handleIncrease = async () => {
+    setLoading(true);
+    const result = await increseItemDb(item._id, quantity);
+    if (result.success) {
+      Swal.fire("Success", "Increase Quantity", "success");
+      updateQuantity(item._id, quantity + 1);
+      setLoading(false);
+    }
+  };
+
+  const handleDecrease = async () => {
+    setLoading(true);
+    const result = await decreseItemDb(item._id, quantity);
+    if (result.success) {
+      Swal.fire("Success", "Decrease Quantity", "success");
+      updateQuantity(item._id, quantity - 1);
+      setLoading(false);
+    }
+  };
   return (
     <div className="card card-side bg-base-100 shadow-xl border border-base-200 p-4 flex-col sm:flex-row items-center gap-4">
       {/* Product Image */}
@@ -88,8 +91,8 @@ export default function CartItem({ item, removeItem, updateQuantity }) {
         {/* + / - Controls */}
         <div className="join border border-base-300">
           <button
-            // onClick={handleDecrease}
-            disabled={quantity <= 1}
+            onClick={handleDecrease}
+            disabled={quantity <= 1 || loading}
             className="btn btn-sm join-item bg-base-200 hover:bg-base-300 border-none"
             aria-label="Decrease quantity"
           >
@@ -101,6 +104,7 @@ export default function CartItem({ item, removeItem, updateQuantity }) {
           </span>
 
           <button
+            disabled={quantity >= 10 || loading}
             onClick={handleIncrease}
             className="btn btn-sm join-item bg-base-200 hover:bg-base-300 border-none"
             aria-label="Increase quantity"
