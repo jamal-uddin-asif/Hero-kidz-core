@@ -1,8 +1,13 @@
-'use client'
+"use client";
+import { createOrder } from "@/actions/server/Order";
+import { useSession } from "next-auth/react";
 import React from "react";
+import Swal from "sweetalert2";
 
 const CheckOutForm = () => {
-  const handleSubmit = (e) => {
+  const session = useSession();
+  console.log(session.data.user.name)
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const form = e.target;
@@ -13,11 +18,16 @@ const CheckOutForm = () => {
       contact: form.contact.value,
       address: form.address.value,
       instruction: form.instruction.value,
-    }
+    };
 
     console.log(payload);
 
-    
+    const result = await createOrder(payload);
+    if (result.success) {
+      Swal.fire("success", "Order created", "success");
+    } else {
+      Swal.fire("error", "Order Not created", "error");
+    }
   };
   return (
     <div>
@@ -36,6 +46,8 @@ const CheckOutForm = () => {
               Full Name
             </label>
             <input
+              value={session.data.user.name}
+              readOnly
               type="text"
               id="name"
               name="name"
@@ -54,6 +66,8 @@ const CheckOutForm = () => {
               Email Address
             </label>
             <input
+             value={session.data.user.email}
+              readOnly
               type="email"
               id="email"
               name="email"
