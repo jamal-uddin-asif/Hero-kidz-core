@@ -2,7 +2,7 @@
 
 import { collections, dbConnect } from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
-import { getCart } from "./cart";
+import { clearCart, getCart } from "./cart";
 import { authOptions } from "@/lib/authOptions";
 
 const orderCollection = dbConnect(collections.ORDERS);
@@ -25,8 +25,9 @@ export const createOrder = async (payload) => {
 
   const result = await orderCollection.insertOne(newOrder);
 
-  //   if(Boolean(result.insertedId)){
-
-  //   }
+  if (Boolean(result.insertedId)) {
+    await clearCart();
+  }
+  
   return { success: Boolean(result.insertedId) };
 };

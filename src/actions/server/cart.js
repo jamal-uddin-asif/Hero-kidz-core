@@ -114,12 +114,13 @@ export const decreseItemDb = async (id, quantity) => {
   return { success: Boolean(result.matchedCount) };
 };
 
-export const clearCart = async () => {
-  const { user } = (await getServerSession(authOptions)) || {};
-  if (!user) return { success: false };
 
-  const query = { email: user?.email };
+// export const clearCart = async () => {
+//   const { user } = (await getServerSession(authOptions)) || {};
+//   if (!user) return { success: false };
 
-  const result = await cartCollection.deleteMany(query);
-  return { success: Boolean(result.deletedCount) };
-};
+//   const query = { email: user?.email };
+
+//   const result = await cartCollection.deleteMany(query);
+//   return { success: Boolean(result.deletedCount) };
+// };

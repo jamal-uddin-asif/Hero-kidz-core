@@ -6,7 +6,6 @@ import Swal from "sweetalert2";
 
 const CheckOutForm = () => {
   const session = useSession();
-  console.log(session.data.user.name)
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -29,6 +28,10 @@ const CheckOutForm = () => {
       Swal.fire("error", "Order Not created", "error");
     }
   };
+
+  if(session.status == 'loading'){
+    return <h1 className="text-4xl">Loading ...........</h1>
+  }
   return (
     <div>
       <div className=" bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
@@ -46,7 +49,7 @@ const CheckOutForm = () => {
               Full Name
             </label>
             <input
-              value={session.data.user.name}
+              value={session?.data?.user?.name}
               readOnly
               type="text"
               id="name"
@@ -66,7 +69,7 @@ const CheckOutForm = () => {
               Email Address
             </label>
             <input
-             value={session.data.user.email}
+             value={session?.data?.user?.email}
               readOnly
               type="email"
               id="email"
