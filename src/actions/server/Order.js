@@ -19,6 +19,7 @@ export const createOrder = async (payload) => {
     return { success: false };
   }
 
+  const totalPrice = cart.reduce((sum, item)=> sum + item.price * item.quantity,)
 
   const newOrder = {
     ...payload,
@@ -31,7 +32,17 @@ export const createOrder = async (payload) => {
   if (Boolean(result.insertedId)) {
     await clearCart();
 
- 
+    const info = await sendEmail({
+      to: user.email,
+      subject: "Your Order Invoice - Hero Kidz",
+      html: orderInvoiceTemplate({
+        orderId: result.insertedId.toString(),
+        items: cart,
+        totalPrice,
+      }),
+    });
+
+    console.log('After send email: ',info)
   }
 
   return { success: Boolean(result.insertedId) };
