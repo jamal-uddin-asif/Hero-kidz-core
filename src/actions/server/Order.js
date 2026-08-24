@@ -4,6 +4,8 @@ import { collections, dbConnect } from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
 import { clearCart, getCart } from "./cart";
 import { authOptions } from "@/lib/authOptions";
+import { sendEmail } from "@/lib/sendEmai";
+import { orderInvoiceTemplate } from "@/lib/orderInvoice";
 
 const orderCollection = dbConnect(collections.ORDERS);
 
@@ -17,6 +19,7 @@ export const createOrder = async (payload) => {
     return { success: false };
   }
 
+
   const newOrder = {
     ...payload,
     items: cart,
@@ -27,7 +30,9 @@ export const createOrder = async (payload) => {
 
   if (Boolean(result.insertedId)) {
     await clearCart();
+
+ 
   }
-  
+
   return { success: Boolean(result.insertedId) };
 };
