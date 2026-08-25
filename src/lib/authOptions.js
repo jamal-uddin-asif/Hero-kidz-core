@@ -64,7 +64,7 @@ export const authOptions = {
       return session;
     },
     async jwt({ token, user, account, profile, isNewUser }) {
-      console.log({'AccountValueInJWT': account})
+      // console.log({'AccountValueInJWT': account})
 
       if (user) {
         if (account.provider == "google") {

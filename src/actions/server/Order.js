@@ -4,8 +4,8 @@ import { collections, dbConnect } from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
 import { clearCart, getCart } from "./cart";
 import { authOptions } from "@/lib/authOptions";
-import { sendEmail } from "@/lib/sendEmai";
-import { orderInvoiceTemplate } from "@/lib/orderInvoice";
+import { sendEmail } from "@/lib/emailSendingUtil/sendEmai";
+import { orderInvoiceTemplate } from "@/lib/emailSendingUtil/orderInvoice";
 
 const orderCollection = dbConnect(collections.ORDERS);
 
@@ -25,6 +25,7 @@ export const createOrder = async (payload) => {
     ...payload,
     items: cart,
     createdAt: new Date().toISOString(),
+    totalPrice,
   };
 
   const result = await orderCollection.insertOne(newOrder);
