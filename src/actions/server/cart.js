@@ -9,21 +9,21 @@ const { dbConnect, collections } = require("@/lib/dbConnect");
 
 const cartCollection = dbConnect(collections.CART);
 
-export const handleCart = async ({ product, inc = true }) => {
+export const handleCart = async (productId) => {
   const { user } = (await getServerSession(authOptions)) || {};
   if (!user) return { success: false };
 
   //getCartItem->user.email && productId
-  const query = { email: user?.email, productId: product?._id };
+  const query = { email: user?.email, productId: new ObjectId(productId) };
 
   const isAdded = await cartCollection.findOne(query);
-
   if (isAdded) {
+
     //if Exist:Update Cart
 
     const updatedData = {
       $inc: {
-        quantity: inc ? 1 : -1,
+        quantity: 1
       },
     };
 
@@ -31,13 +31,17 @@ export const handleCart = async ({ product, inc = true }) => {
     return { success: Boolean(result.modifiedCount) };
   } else {
     //Not Exist:insert Cart
+    console.log('Checking product id form else: ',productId)
+  
+    const product = await dbConnect(collections.PRODUCTS).findOne({_id: new ObjectId(productId)})
+
     const newData = {
       productId: product?._id,
       email: user?.email,
-      title: product.title,
+      title: product?.title,
       quantity: 1,
-      image: product.image,
-      price: product.price - (product.price * product.discount) / 100,
+      image: product?.image,
+      price: product?.price - (product?.price * product?.discount) / 100,
       username: user?.name,
     };
 
@@ -64,7 +68,7 @@ export const deleteCart = async (id) => {
 
   if (id.length != 24) return { success: false };
 
-  const query = { _id: new ObjectId(id) };
+  const query = { _id: new ObjectId(id), email: user?.email };
 
   const result = await cartCollection.deleteOne(query);
   // if (result.deletedCount) {
@@ -81,7 +85,7 @@ export const increseItemDb = async (id, quantity) => {
   if (quantity > 10)
     return { success: false, message: "You can not buy 10 product at a time" };
 
-  const query = { _id: new ObjectId(id) };
+   const query = { _id: new ObjectId(id), email: user?.email };
 
   const updatedData = {
     $inc: {
@@ -101,7 +105,7 @@ export const decreseItemDb = async (id, quantity) => {
   if (quantity <= 1)
     return { success: false, message: "Quantity can not be emty" };
 
-  const query = { _id: new ObjectId(id) };
+    const query = { _id: new ObjectId(id), email: user?.email };
 
   const updatedData = {
     $inc: {
@@ -113,7 +117,6 @@ export const decreseItemDb = async (id, quantity) => {
 
   return { success: Boolean(result.matchedCount) };
 };
-
 
 export const clearCart = async () => {
   const { user } = (await getServerSession(authOptions)) || {};
