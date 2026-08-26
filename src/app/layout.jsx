@@ -5,7 +5,6 @@ import Navbar from "@/components/layouts/Navbar";
 import Footer from "@/components/layouts/Footer";
 import NextAuthProvider from "@/provider/NextAuthProvider";
 
-
 const poppins = Poppins({
   weight: ["100", "200", "400", "500", "600", "800"],
 });
@@ -97,10 +96,9 @@ export default function RootLayout({ children }) {
             <Navbar></Navbar>
           </header>
 
-            <main className="py-2 md:w-11/12 mx-auto min-h-[calc(100vh-302px)]">
-              {children}
-            </main>
-
+          <main className="py-2 md:w-11/12 mx-auto min-h-[calc(100vh-302px)]">
+            {children}
+          </main>
 
           <footer>
             <Footer></Footer>
