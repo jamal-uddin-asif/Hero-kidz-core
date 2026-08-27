@@ -19,7 +19,9 @@ export const createOrder = async (payload) => {
     return { success: false };
   }
 
-  const totalPrice = cart.reduce((sum, item)=> sum + item.price * item.quantity,)
+  const totalPrice = cart.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+  );
 
   const newOrder = {
     ...payload,
@@ -43,8 +45,13 @@ export const createOrder = async (payload) => {
       }),
     });
 
-    console.log('After send email: ',info)
+    console.log("After send email: ", info);
   }
 
   return { success: Boolean(result.insertedId) };
+};
+
+export const getOrders = async () => {
+  const result = await orderCollection.find().toArray();
+  return result || [];
 };
