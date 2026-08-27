@@ -6,8 +6,10 @@ import { clearCart, getCart } from "./cart";
 import { authOptions } from "@/lib/authOptions";
 import { sendEmail } from "@/lib/emailSendingUtil/sendEmai";
 import { orderInvoiceTemplate } from "@/lib/emailSendingUtil/orderInvoice";
+import { ObjectId } from "mongodb";
 
 const orderCollection = dbConnect(collections.ORDERS);
+const productCollection = dbConnect(collections.PRODUCTS);
 
 export const createOrder = async (payload) => {
   const { user } = (await getServerSession(authOptions)) || {};
@@ -23,6 +25,15 @@ export const createOrder = async (payload) => {
     (sum, item) => sum + item.price * item.quantity,
   );
 
+  const bulkOperations = cart.map((item) => ({
+    updateOne: {
+      filter: { _id: new ObjectId(item.productId) },
+      update: {
+        $set: { sold: item.quantity },
+      },
+    },
+  }));
+
   const newOrder = {
     ...payload,
     items: cart,
@@ -33,6 +44,10 @@ export const createOrder = async (payload) => {
   const result = await orderCollection.insertOne(newOrder);
 
   if (Boolean(result.insertedId)) {
+    if (bulkOperations.length > 0) {
+      const updateResult = await productCollection.bulkWrite(bulkOperations);
+      console.log(`Modified documents: ${updateResult.modifiedCount}`);
+    }
     await clearCart();
 
     const info = await sendEmail({
