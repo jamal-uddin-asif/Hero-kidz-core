@@ -1,14 +1,14 @@
 import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 
-const privateRoutes = ["/cart", "/dashboard", "/checkout"];
+const privateRoutes = ["/cart", "/dashboard", "/checkout", '/myOrders'];
 
 export async function proxy(req) {
-  const token = await getToken({ req });
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const isAuthenticated = Boolean(token);
   const reqPath = req.nextUrl.pathname;
   const isPrivateReq = privateRoutes.some((route) => reqPath.startsWith(route));
-  console.log({ token, isAuthenticated, reqPath, isPrivateReq });
+  // console.log({ token, isAuthenticated, reqPath, isPrivateReq });
 
   if (!isAuthenticated && isPrivateReq) {
     return NextResponse.redirect(
@@ -19,5 +19,5 @@ export async function proxy(req) {
 }
 
 export const config = {
-  matcher: ["/cart/:path*", "/dashboard/:path*", "/checkout/:path*"],
+  matcher: ["/cart/:path*", "/dashboard/:path*", "/checkout/:path*", "/myOrders/:path*"],
 };

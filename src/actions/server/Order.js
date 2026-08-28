@@ -7,6 +7,7 @@ import { authOptions } from "@/lib/authOptions";
 import { sendEmail } from "@/lib/emailSendingUtil/sendEmai";
 import { orderInvoiceTemplate } from "@/lib/emailSendingUtil/orderInvoice";
 import { ObjectId } from "mongodb";
+import { revalidatePath } from "next/cache";
 
 const orderCollection = dbConnect(collections.ORDERS);
 const productCollection = dbConnect(collections.PRODUCTS);
@@ -44,11 +45,15 @@ export const createOrder = async (payload) => {
   const result = await orderCollection.insertOne(newOrder);
 
   if (Boolean(result.insertedId)) {
+    
     if (bulkOperations.length > 0) {
+      // its update multiple documents
       const updateResult = await productCollection.bulkWrite(bulkOperations);
       console.log(`Modified documents: ${updateResult.modifiedCount}`);
     }
     await clearCart();
+
+    revalidatePath('/cart')
 
     const info = await sendEmail({
       to: user.email,

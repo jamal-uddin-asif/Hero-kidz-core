@@ -4,11 +4,13 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import Swal from "sweetalert2";
 
-const CheckOutForm = () => {
+const CheckOutForm = ({cart}) => {
   const session = useSession();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
+    console.log(cart.length === 0)
     const form = e.target;
 
     const payload = {
@@ -134,8 +136,9 @@ const CheckOutForm = () => {
           </div>
 
           <button
-            type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg shadow transition duration-200 mt-2"
+          disabled={cart.length == 0}
+          type="submit"
+          className={`w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 rounded-lg shadow transition duration-200 mt-2 disabled:bg-gray-300 cursor-pointer disabled:cursor-not-allowed`}
           >
             Place Order
           </button>

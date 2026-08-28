@@ -20,7 +20,7 @@ const CheckOutPage = async () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* Left Side: Delivery Form */}
         <div className="lg:col-span-7">
-          <CheckOutForm />
+          <CheckOutForm cart={cart}/>
         </div>
 
         {/* Right Side: Order Summary */}

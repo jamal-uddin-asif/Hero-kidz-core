@@ -6,7 +6,7 @@ const MyOrder = async () => {
   const orders = await getOrders();
   
   const formated = orders.map(order=> ({...order, _id: order._id.toString()}))
-  console.log({orders,formated})
+  
   return (
     <div>
       <h1 className="text-4xl font-bold border-l-6 px-3 py-3">My Orders</h1>
